@@ -50,7 +50,7 @@ class World(object):
         self.__agent.set_position(new_x, new_y)
         self.__world[new_y][new_x] = AGENT_VALUE
 
-    def get_environment_vector(self, x: int, y: int):
+    def get_point_environment_vector(self, x: int, y: int):
         assert 0 <= x <= self.__width, 'Bad point coordinates'
         assert 0 <= y <= self.__height, 'Bad point coordinates'
 
