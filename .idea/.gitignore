@@ -1,9 +1,0 @@
-# Default ignored files
-
-/shelf/
-/workspace.xml
-
-# useless files in .idea directory
-.idea
-*.xml
-*.iml
