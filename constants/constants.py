@@ -5,10 +5,10 @@ OBSTACLE_VALUE = 1
 AGENT_VALUE = 2
 DESTINATION_VALUE = 3
 
-OBSTACLE_CHAR = "# "
-DESTINATION_CHAR = "$ "
-AGENT_CHAR = "A "
-EMPTY_FIELD_CHAR = ". "
+OBSTACLE_CHAR = "#"
+DESTINATION_CHAR = "$"
+AGENT_CHAR = "A"
+EMPTY_FIELD_CHAR = "."
 
 # constants values representing game world building
 OBSTACLES_COUNT = 18

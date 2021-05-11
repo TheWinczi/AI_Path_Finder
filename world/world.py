@@ -78,6 +78,7 @@ class World(object):
                 row += AGENT_CHAR
             else:
                 row += EMPTY_FIELD_CHAR
+            row += " "
         return row
 
     def set_width(self, width: int):
