@@ -1,4 +1,4 @@
-from agent.agent import Agent
+from a.agent import Agent
 from constants.constants import *
 from random import randrange
 
@@ -17,10 +17,20 @@ class World(object):
 
     def generate_world(self):
         self.place_agent()
+        self.place_destination()
         self.place_obstacles()
-        destination_x = randrange(0, self.__width)
-        destination_y = randrange(0, self.__height)
-        self.__world[destination_y][destination_x] = DESTINATION_VALUE
+
+    def place_agent(self):
+        new_x = randrange(0, self.__width)
+        new_y = randrange(0, self.__height)
+        self.__agent.set_position(new_x, new_y)
+        self.__world[new_y][new_x] = AGENT_VALUE
+
+    def place_destination(self):
+        x = randrange(0, self.__width)
+        y = randrange(0, self.__height)
+        self.__world[y][x] = DESTINATION_VALUE
+        self.__agent.set_destination(x, y)
 
     def place_obstacles(self):
         for _ in range(OBSTACLES_COUNT):
@@ -43,12 +53,6 @@ class World(object):
         for height in range(-(MIN_OBSTACLE_HEIGHT * size) // 2, (MIN_OBSTACLE_HEIGHT * size) // 2):
             for width in range(-(MIN_OBSTACLE_WIDTH * size) // 2, (MIN_OBSTACLE_WIDTH * size) // 2):
                 self.__world[y + height][x + width] = OBSTACLE_VALUE
-
-    def place_agent(self):
-        new_x = randrange(0, self.__width)
-        new_y = randrange(0, self.__height)
-        self.__agent.set_position(new_x, new_y)
-        self.__world[new_y][new_x] = AGENT_VALUE
 
     def get_point_environment_vector(self, x: int, y: int):
         assert 0 <= x <= self.__width, 'Bad point coordinates'
