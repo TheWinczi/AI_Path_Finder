@@ -1,19 +1,18 @@
-"""
-    File including all constants
-    values using in project.
-    All variables names are written
-    in capital letters.
-"""
 
 # constants values representing fields in the game world
 EMPTY_FIELD_VALUE = 0
-OBSTACLE_FIELD_VALUE = 1
-AGENT_FIELD_VALUE = 2
-DESTINATION_FIELD_VALUE = 3
+OBSTACLE_VALUE = 1
+AGENT_VALUE = 2
+DESTINATION_VALUE = 3
 
+OBSTACLE_CHAR = "#"
+DESTINATION_CHAR = "$"
+AGENT_CHAR = "A"
+EMPTY_FIELD_CHAR = "."
 
 # constants values representing game world building
 OBSTACLES_COUNT = 18
-OBSTACLE_PROBABILITY = 0.6
-MAX_OBSTACLE_HEIGHT = 4
-MAX_OBSTACLE_WIDTH = 4
+MIN_OBSTACLE_HEIGHT = 1
+MIN_OBSTACLE_WIDTH = 1
+MAX_OBSTACLE_SIZE = 4
+
