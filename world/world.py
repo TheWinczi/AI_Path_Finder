@@ -106,8 +106,8 @@ class World(object):
 if __name__ == '__main__':
     test_world = World(20, 20)
     print(test_world)
-    print(test_world.get_environment_vector(0, 0))
-    print(test_world.get_environment_vector(5, 5))
-    print(test_world.get_environment_vector(0, 19))
-    print(test_world.get_environment_vector(19, 0))
-    print(test_world.get_environment_vector(19, 19))
+    print(test_world.get_point_environment_vector(0, 0))
+    print(test_world.get_point_environment_vector(5, 5))
+    print(test_world.get_point_environment_vector(0, 19))
+    print(test_world.get_point_environment_vector(19, 0))
+    print(test_world.get_point_environment_vector(19, 19))
