@@ -3,6 +3,11 @@
     implementing methods of moving around,
     making decisions, storing the history of decisions.
 """
+from random import randrange
+
+from agent.decision import Decision
+from agent.strategyBucket import StrategyBucket
+from direction import Direction
 
 
 class Agent(object):
@@ -13,24 +18,27 @@ class Agent(object):
     def __init__(self):
         """ Initialize the Agent """
         self.__history = []
-        self.__x = -1
-        self.__y = -1
-        self.__destination_x = -1
-        self.__destination_y = -1
+        self.__x = 0
+        self.__y = 0
+        self.__destination_x = 0
+        self.__destination_y = 0
+        self.__strategy_bucket = StrategyBucket()
 
-    # ---------
-    #   TO DO
-    # ---------
-    def make_decision(self):
+    def make_decision(self, environment: list):
         """ make decision where agent have to go """
-        pass
+        # TODO when to choose exploration vs exploitation
+        direction = Direction.get_direction(randrange(0, 4))
+        if False:
+            direction = self.__strategy_bucket.get_strategy(environment)
+        self.move(Decision(direction, environment))
 
-    # ---------
-    #   TO DO
-    # ---------
-    def move(self, way: int):
+    def move(self, decision: Decision):
         """ Move the agent in a given direction """
-        pass
+        self.__history.append(decision)
+        self.__y += decision.direction[0]
+        self.__x += decision.direction[1]
+        self.__strategy_bucket.add_strategy(decision)
+
 
     def add_to_history(self, env_vector: list[int], decision: int):
         """ Add new pair of environment vector and decision to history """
@@ -49,6 +57,10 @@ class Agent(object):
         """ Set new agent position """
         self.__x = x
         self.__y = y
+
+    def set_destination(self, x: int, y: int):
+        self.__destination_x = x
+        self.__destination_y = y
 
     def clear_history(self):
         """ clear agent history """
