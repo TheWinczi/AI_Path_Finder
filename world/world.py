@@ -1,4 +1,4 @@
-from a.agent import Agent
+from agent.agent import Agent
 from constants.constants import *
 from random import randrange
 
