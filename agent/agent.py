@@ -3,10 +3,11 @@
     implementing methods of moving around,
     making decisions, storing the history of decisions.
 """
+import random
 from random import randrange
-
 from agent.decision import Decision
 from agent.strategyBucket import StrategyBucket
+from constants.constants import *
 from direction import Direction
 
 
@@ -23,13 +24,18 @@ class Agent(object):
         self.__destination_x = 0
         self.__destination_y = 0
         self.__strategy_bucket = StrategyBucket()
+        self.__exploration_rate = EXPLORATION_RATE_INIT
+        self.__exploration_decaying_rate = EXPLORATION_DECAY_RATE
 
     def make_decision(self, environment: list):
         """ make decision where agent have to go """
-        # TODO when to choose exploration vs exploitation
         direction = Direction.get_direction(randrange(0, 4))
-        if False:
-            direction = self.__strategy_bucket.get_strategy(environment)
+        if random.uniform(0, 1) < self.__exploration_rate:
+            self.__exploration_rate *= self.__exploration_decaying_rate
+            direction_from_bucket = self.__strategy_bucket.get_strategy(environment)
+            if direction_from_bucket is not None:
+                direction = direction_from_bucket
+
         self.move(Decision(direction, environment))
 
     def move(self, decision: Decision):
@@ -37,8 +43,16 @@ class Agent(object):
         self.__history.append(decision)
         self.__y += decision.direction[0]
         self.__x += decision.direction[1]
-        self.__strategy_bucket.add_strategy(decision)
+        if self.is_in_destination():
+            self.give_history_to_strategy_bucket()
 
+    def give_history_to_strategy_bucket(self):
+        self.__strategy_bucket.add_strategy(self.__history)
+
+    def is_in_destination(self):
+        if self.__x == self.__destination_x and self.__y == self.__destination_y:
+            return True
+        return False
 
     def add_to_history(self, env_vector: list[int], decision: int):
         """ Add new pair of environment vector and decision to history """
