@@ -30,6 +30,7 @@ class Agent(object):
     def make_decision(self, environment: list):
         """ make decision where agent have to go """
         direction = Direction.get_direction(randrange(0, 4))
+        # todo kolizje z przeszkodami
         if random.uniform(0, 1) < self.__exploration_rate:
             self.__exploration_rate *= self.__exploration_decaying_rate
             direction_from_bucket = self.__strategy_bucket.get_strategy(environment)
