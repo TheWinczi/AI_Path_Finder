@@ -4,9 +4,9 @@ from enum import Enum
 class Direction(Enum):
     # [0] - y
     # [1] - x
-    up = [1, 0]
+    up = [-1, 0]
     right = [0, 1]
-    down = [-1, 0]
+    down = [1, 0]
     left = [0, -1]
 
     @classmethod

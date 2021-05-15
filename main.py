@@ -1,16 +1,24 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from world.world import World
+from agent.agent import Agent
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def main():
+    world_height, world_width = 20, 20
+    world = World(world_width, world_height)
+    agent = Agent(world)
+    world.place_agent(agent)
+
+    start_agent_x, start_agent_y = agent.get_position()
+    while True:
+        print(world)
+        agent.go_to_destination()
+        agent.learn_new_strategy()
+        print(world)
+        print(agent.get_strategy_bucket())
+        input("Press enter:")
+
+        agent.set_position(start_agent_x, start_agent_y)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()
