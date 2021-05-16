@@ -12,19 +12,19 @@ class World(object):
         self.__width = width
         self.__height = height
         self.__world = [[EMPTY_FIELD_VALUE for _ in range(width)].copy() for _ in range(height)]
-        self.__agent = Agent()
+        self.__agent = None
         self.generate_world()
 
     def generate_world(self):
-        self.place_agent()
-        self.place_destination()
         self.place_obstacles()
 
-    def place_agent(self):
+    def place_agent(self, agent: Agent):
+        self.__agent = agent
         new_x = randrange(0, self.__width)
         new_y = randrange(0, self.__height)
         self.__agent.set_position(new_x, new_y)
         self.__world[new_y][new_x] = AGENT_VALUE
+        self.place_destination()
 
     def place_destination(self):
         x = randrange(0, self.__width)
@@ -64,6 +64,20 @@ class World(object):
                 if 0 <= y + i < self.__height and 0 <= x + j < self.__width:
                     env_vector[i + 1][j + 1] = self.__world[y + i][x + j]
         return env_vector
+
+    def is_field_empty(self, x: int, y: int):
+        if 0 <= x < self.__width and 0 <= y < self.__height:
+            return self.__world[y][x] == EMPTY_FIELD_VALUE
+        return False
+
+    def update_agent_point(self):
+        for i, row in enumerate(self.__world):
+            for j, field in enumerate(row):
+                if field == AGENT_VALUE:
+                    self.__world[i][j] = EMPTY_FIELD_VALUE
+                    break
+        current_agent_position = self.__agent.get_position()
+        self.__world[current_agent_position[1]][current_agent_position[0]] = AGENT_VALUE
 
     def __str__(self):
         world_as_string = ""
