@@ -121,6 +121,9 @@ class World(object):
     def get_height(self):
         return self.__height
 
+    def get_world(self):
+        return self.__world.copy()
+
 
 if __name__ == '__main__':
     test_world = World(20, 20)
