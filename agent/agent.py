@@ -47,7 +47,8 @@ class Agent(object):
             decision = self.make_decision(self.__world.get_point_environment_vector(self.__x, self.__y))
             self.move(decision)
             if self.is_in_destination():
-                break
+                return 1
+        return 0
 
     def learn_new_strategy(self):
         self.give_history_to_strategy_bucket()
@@ -56,7 +57,11 @@ class Agent(object):
         self.clear_history()
 
     def choose_direction(self):
+        counter = 0
         while True:
+            counter += 1
+            if counter > 10000:
+                raise Exception("bad world")
             direction = Direction.get_direction(randrange(0, 4))
             if self.__world.is_field_empty(self.__x + direction.value[1], self.__y + direction.value[0]):
                 return direction
@@ -90,6 +95,9 @@ class Agent(object):
         self.__destination_x = x
         self.__destination_y = y
 
+    def get_destination(self):
+        return self.__destination_x, self.__destination_y
+
     def set_world(self, world):
         self.__world = world
 
@@ -109,11 +117,12 @@ class Agent(object):
         return self.__exploration_rate
 
     def get_optimal_path(self):
-        map = self.__world.get_world()
+        map = self.__world.get_world_copy()
         self.__exploration_rate = 0
         self.go_to_destination()
         for coord in self.__coords_history:
-            map[coord[1]][coord[0]] = PATH_VALUE
+            if map[coord[1]][coord[0]] != DESTINATION_VALUE and map[coord[1]][coord[0]] != AGENT_VALUE:
+                map[coord[1]][coord[0]] = PATH_VALUE
         return map
 
 

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from agent.agent import Agent
 from constants.constants import *
 from random import randrange
@@ -67,7 +69,7 @@ class World(object):
 
     def is_field_empty(self, x: int, y: int):
         if 0 <= x < self.__width and 0 <= y < self.__height:
-            return self.__world[y][x] == EMPTY_FIELD_VALUE
+            return self.__world[y][x] == EMPTY_FIELD_VALUE or self.__world[y][x] == DESTINATION_VALUE
         return False
 
     def update_agent_point(self):
@@ -121,8 +123,12 @@ class World(object):
     def get_height(self):
         return self.__height
 
-    def get_world(self):
-        return self.__world.copy()
+    def get_world_copy(self):
+        return deepcopy(self.__world)
+
+    def place_destination_on_map(self, x, y):
+        self.__world[y][x] = DESTINATION_VALUE
+        self.__agent.set_destination(x, y)
 
 
 if __name__ == '__main__':

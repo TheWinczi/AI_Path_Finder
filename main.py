@@ -3,24 +3,6 @@ from world.world import World
 from agent.agent import Agent
 
 
-def main():
-    world_height, world_width = 20, 20
-    world = World(world_width, world_height)
-    agent = Agent(world)
-    world.place_agent(agent)
-
-    start_agent_x, start_agent_y = agent.get_position()
-    while True:
-        print(world)
-        agent.go_to_destination()
-        agent.learn_new_strategy()
-        print(world)
-        print(agent.get_strategy_bucket())
-        input("Press enter:")
-
-        agent.set_position(start_agent_x, start_agent_y)
-
-
 def print_path(optimal_path):
     world_as_string = ""
     for world_row in optimal_path:
@@ -46,24 +28,33 @@ def get_path_row_as_string(world_row):
 
 
 def main2():
-    world_height, world_width = 20, 20
+    world_height, world_width = 10, 10
     world = World(world_width, world_height)
     agent = Agent(world)
     world.place_agent(agent)
-
-    start_agent_x, start_agent_y = agent.get_position()
-
     print(world)
+    start_agent_x, start_agent_y = agent.get_position()
+    dx, dy = agent.get_destination()
+    fail_counter = 0
+
     while True:
         current_exploration_rate = agent.get_exploration_rate()
-        print(current_exploration_rate)
-        if current_exploration_rate < 0.001:
+        if current_exploration_rate < 0.01:
             optimal_path = agent.get_optimal_path()
+            print("")
+            print(agent.get_strategy_bucket())
             print_path(optimal_path)
             break
-        agent.go_to_destination()
+        status = agent.go_to_destination()
+        if status == 0:
+            fail_counter += 1
+        if status == 1:
+            fail_counter -= 9999999
+        if fail_counter > 100:
+            raise Exception("bad world")
         agent.learn_new_strategy()
         agent.set_position(start_agent_x, start_agent_y)
+        world.place_destination_on_map(dx, dy)
 
 
 if __name__ == '__main__':

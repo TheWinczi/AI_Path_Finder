@@ -15,5 +15,5 @@ class Direction(Enum):
             0: Direction.up,
             1: Direction.right,
             2: Direction.down,
-            3: Direction.right
+            3: Direction.left
         }.get(number, 0)
