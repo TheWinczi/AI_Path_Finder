@@ -22,18 +22,36 @@ class StrategyBucket(object):
         self.__decisions = history.copy()
 
     def learn_using_history(self, destination_x: int, destination_y: int, start_x: int, start_y: int):
-        for decision in self.__decisions:
+        self.update_strategy_for_final_choice(self.__decisions[-1], 100)
+        for i in range(len(self.__decisions) - 2, -1, -1):
+            decision = self.__decisions[i]
+            prev_decision = self.__decisions[i + 1]
             decision_rating = self.calculate_decision_rating(decision, destination_x, destination_y, start_x, start_y)
-            self.update_strategy(decision, decision_rating)
+            self.update_strategy(decision, prev_decision, decision_rating)
             start_x = start_x + decision.direction.value[1]
             start_y = start_y + decision.direction.value[0]
 
-    def update_strategy(self, decision: Decision, value: int):
+    def update_strategy_for_final_choice(self, decision: Decision, value: int):
+        index = self.index(decision)
+        if index is None:
+            self.__strategy.append(decision)
+            index = len(self.__strategy) - 1
+        self.__strategy[index].rating += 100
+        pass
+
+    def update_strategy(self, decision: Decision, prev_decision: Decision, value: int):
         index = self.index(decision)
         if index is None:
             self.__strategy.append(decision)
             index = len(self.__strategy)-1
-        self.__strategy[index].rating += value
+        self.__strategy[index].rating = self.old_value_part(index) + self.new_value_part(value, prev_decision)
+        pass
+
+    def new_value_part(self, value, prev_decision):
+        return self.__learning_rate * (value + (self.__discount_rate * prev_decision.rating))
+
+    def old_value_part(self, index):
+        return (1 - self.__learning_rate) * self.__strategy[index].rating
 
     def get_distance(self, x1: int, y1: int, x2: int, y2: int):
         return sqrt((x1 - x2)**2 + (y1 - y2)**2)
@@ -72,15 +90,6 @@ class StrategyBucket(object):
                 best_decision_index = i
                 best_decision_rating = decision.rating
         return decisions_list[best_decision_index]
-
-    def calculate_q_value(self, current_decision: Decision, new_decision: Decision):
-        # todo
-        pass
-
-    def calculate_new_strategy(self, current_decision: Decision, new_decision: Decision):
-        # TODO new improving strategy - calculate Q-Value
-        self.__decisions.remove(current_decision)
-        self.__decisions.append(new_decision)
 
     def __str__(self):
         message = ""

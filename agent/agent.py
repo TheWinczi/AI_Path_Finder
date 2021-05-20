@@ -6,13 +6,13 @@ from constants.constants import *
 from direction import Direction
 
 
-
 class Agent(object):
     """ Class representing agent in game world.
         Agent has to reach to destination point
         in the shortest distance """
 
     def __init__(self, world):
+        self.__coords_history = []
         self.__world = world
         self.__history = []
         self.__x = 0
@@ -36,9 +36,9 @@ class Agent(object):
         return Decision(environment, direction)
 
     def move(self, decision: Decision):
-        self.add_to_history(decision)
         self.__y += decision.direction.value[0]
         self.__x += decision.direction.value[1]
+        self.add_to_history(decision)
         self.__world.update_agent_point()
 
     def go_to_destination(self, max_moves: int = MAX_AGENT_MOVES_COUNT):
@@ -47,15 +47,21 @@ class Agent(object):
             decision = self.make_decision(self.__world.get_point_environment_vector(self.__x, self.__y))
             self.move(decision)
             if self.is_in_destination():
-                break
+                return 1
+        return 0
 
     def learn_new_strategy(self):
         self.give_history_to_strategy_bucket()
-        self.__strategy_bucket.learn_using_history(self.__destination_x, self.__destination_y, self.__start_x, self.__start_y)
+        self.__strategy_bucket.learn_using_history(self.__destination_x, self.__destination_y, self.__start_x,
+                                                   self.__start_y)
         self.clear_history()
 
     def choose_direction(self):
+        counter = 0
         while True:
+            counter += 1
+            if counter > 10000:
+                raise Exception("bad world")
             direction = Direction.get_direction(randrange(0, 4))
             if self.__world.is_field_empty(self.__x + direction.value[1], self.__y + direction.value[0]):
                 return direction
@@ -70,6 +76,7 @@ class Agent(object):
 
     def add_to_history(self, decision: Decision):
         self.__history.append(decision)
+        self.__coords_history.append((self.__x, self.__y))
 
     def __str__(self):
         string_agent = "{"
@@ -88,6 +95,9 @@ class Agent(object):
         self.__destination_x = x
         self.__destination_y = y
 
+    def get_destination(self):
+        return self.__destination_x, self.__destination_y
+
     def set_world(self, world):
         self.__world = world
 
@@ -102,6 +112,18 @@ class Agent(object):
 
     def get_strategy_bucket(self):
         return self.__strategy_bucket
+
+    def get_exploration_rate(self):
+        return self.__exploration_rate
+
+    def get_optimal_path(self):
+        map = self.__world.get_world_copy()
+        self.__exploration_rate = 0
+        self.go_to_destination()
+        for coord in self.__coords_history:
+            if map[coord[1]][coord[0]] != DESTINATION_VALUE and map[coord[1]][coord[0]] != AGENT_VALUE:
+                map[coord[1]][coord[0]] = PATH_VALUE
+        return map
 
 
 if __name__ == '__main__':
