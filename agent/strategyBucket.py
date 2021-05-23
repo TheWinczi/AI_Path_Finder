@@ -21,37 +21,40 @@ class StrategyBucket(object):
     def add_new_decisions_history(self, history: list[Decision]):
         self.__decisions = history.copy()
 
-    def learn_using_history(self, destination_x: int, destination_y: int, start_x: int, start_y: int):
-        self.update_strategy_for_final_choice(self.__decisions[-1], 100)
+    def learn_using_history(self):
+        self.update_strategy_for_final_choice(self.__decisions[-1], DESTINATION_FIELD_PRICE)
         for i in range(len(self.__decisions) - 2, -1, -1):
             decision = self.__decisions[i]
-            prev_decision = self.__decisions[i + 1]
-            decision_rating = self.calculate_decision_rating(decision, destination_x, destination_y, start_x, start_y)
-            self.update_strategy(decision, prev_decision, decision_rating)
-            start_x = start_x + decision.direction.value[1]
-            start_y = start_y + decision.direction.value[0]
+            next_decision = self.__decisions[i + 1]
+            decision_rating = self.calculate_decision_rating(decision, next_decision)
+            self.update_strategy(decision, decision_rating)
+
+    def calculate_decision_rating(self, decision: Decision, next_decision: Decision):
+        return self.new_value_part(next_decision) + self.old_value_part(decision)
 
     def update_strategy_for_final_choice(self, decision: Decision, value: int):
         index = self.index(decision)
         if index is None:
             self.__strategy.append(decision)
             index = len(self.__strategy) - 1
-        self.__strategy[index].rating += 100
-        pass
+        self.__strategy[index].rating += value
 
-    def update_strategy(self, decision: Decision, prev_decision: Decision, value: int):
+    def new_value_part(self, next_decision: Decision):
+        return self.__learning_rate * (EMPTY_FIELD_COST + (self.__discount_rate * self.get_strategy(next_decision.environment).rating))
+
+    def old_value_part(self, decision: Decision):
+        return (1 - self.__learning_rate) * self.get_decision(decision).rating
+
+    def get_decision(self, decision: Decision) -> Decision:
+        dec = list(filter(lambda d: d.environment == decision.environment and d.direction == decision.direction, self.__strategy))
+        return dec.pop() if len(dec) > 0 else Decision(decision.environment, decision.direction)
+
+    def update_strategy(self, decision: Decision, rating: float):
         index = self.index(decision)
         if index is None:
             self.__strategy.append(decision)
             index = len(self.__strategy)-1
-        self.__strategy[index].rating = self.old_value_part(index) + self.new_value_part(value, prev_decision)
-        pass
-
-    def new_value_part(self, value, prev_decision):
-        return self.__learning_rate * (value + (self.__discount_rate * prev_decision.rating))
-
-    def old_value_part(self, index):
-        return (1 - self.__learning_rate) * self.__strategy[index].rating
+        self.__strategy[index].rating = rating
 
     def get_distance(self, x1: int, y1: int, x2: int, y2: int):
         return sqrt((x1 - x2)**2 + (y1 - y2)**2)
@@ -62,17 +65,11 @@ class StrategyBucket(object):
                 return i
         return None
 
-    def calculate_decision_rating(self, decision, destination_x: int, destination_y: int, start_x: int, start_y: int):
-        distance_before_decision = self.get_distance(start_x, start_y, destination_x, destination_y)
-        distance_after_decision = self.get_distance(start_x + decision.direction.value[1], start_x + decision.direction.value[0], destination_x, destination_y)
-        if distance_after_decision < distance_before_decision:
-            return 1
-        return -0.5
 
     def get_strategy(self, environment: list):
         decisions_list = self.get_environmental_decisions(environment)
         if len(decisions_list) > 0:
-            return self.get_the_best_decision(decisions_list).direction
+            return self.get_the_best_decision(decisions_list)
         return None
 
     def get_environmental_decisions(self, environment: list):

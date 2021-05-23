@@ -31,7 +31,7 @@ class Agent(object):
             self.__exploration_rate *= self.__exploration_decaying_rate
             direction_from_bucket = self.__strategy_bucket.get_strategy(environment)
             if direction_from_bucket is not None:
-                direction = direction_from_bucket
+                direction = direction_from_bucket.direction
 
         return Decision(environment, direction)
 
@@ -52,8 +52,7 @@ class Agent(object):
 
     def learn_new_strategy(self):
         self.give_history_to_strategy_bucket()
-        self.__strategy_bucket.learn_using_history(self.__destination_x, self.__destination_y, self.__start_x,
-                                                   self.__start_y)
+        self.__strategy_bucket.learn_using_history()
         self.clear_history()
 
     def choose_direction(self):
