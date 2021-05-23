@@ -28,7 +28,7 @@ def get_path_row_as_string(world_row):
 
 
 def main2():
-    world_height, world_width = 10, 10
+    world_height, world_width = 15, 15
     world = World(world_width, world_height)
     agent = Agent(world)
     world.place_agent(agent)
@@ -49,6 +49,7 @@ def main2():
         if status == 0:
             fail_counter += 1
         if status == 1:
+            print("success")
             fail_counter -= 9999999
         if fail_counter > 100:
             raise Exception("bad world")

@@ -27,12 +27,10 @@ class Agent(object):
 
     def make_decision(self, environment: list):
         direction = self.choose_direction()
-        if random.uniform(0, 1) < self.__exploration_rate:
-            self.__exploration_rate *= self.__exploration_decaying_rate
+        if random.uniform(0, 1) > self.__exploration_rate:
             direction_from_bucket = self.__strategy_bucket.get_strategy(environment)
             if direction_from_bucket is not None:
-                direction = direction_from_bucket
-
+                direction = direction_from_bucket.direction
         return Decision(environment, direction)
 
     def move(self, decision: Decision):
@@ -52,8 +50,8 @@ class Agent(object):
 
     def learn_new_strategy(self):
         self.give_history_to_strategy_bucket()
-        self.__strategy_bucket.learn_using_history(self.__destination_x, self.__destination_y, self.__start_x,
-                                                   self.__start_y)
+        self.__strategy_bucket.learn_using_history()
+        self.__exploration_rate *= self.__exploration_decaying_rate
         self.clear_history()
 
     def choose_direction(self):
@@ -103,6 +101,7 @@ class Agent(object):
 
     def clear_history(self):
         self.__history.clear()
+        self.__coords_history.clear()
 
     def get_history(self):
         return self.__history
