@@ -60,9 +60,9 @@ class World(object):
         assert 0 <= x <= self.__width, 'Bad point coordinates'
         assert 0 <= y <= self.__height, 'Bad point coordinates'
 
-        env_vector = [[OBSTACLE_VALUE for _ in range(3)].copy() for _ in range(3)]
-        for i in range(-1, 2):
-            for j in range(-1, 2):
+        env_vector = [[OBSTACLE_VALUE for _ in range(5)].copy() for _ in range(5)]
+        for i in range(-2, 3):
+            for j in range(-2, 3):
                 if 0 <= y + i < self.__height and 0 <= x + j < self.__width:
                     env_vector[i + 1][j + 1] = self.__world[y + i][x + j]
         return env_vector

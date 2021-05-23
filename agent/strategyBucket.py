@@ -30,7 +30,9 @@ class StrategyBucket(object):
             self.update_strategy(decision, decision_rating)
 
     def calculate_decision_rating(self, decision: Decision, next_decision: Decision):
-        return self.new_value_part(next_decision) + self.old_value_part(decision)
+        new = self.new_value_part(next_decision)
+        old = self.old_value_part(decision)
+        return new + old
 
     def update_strategy_for_final_choice(self, decision: Decision, value: int):
         index = self.index(decision)
@@ -46,25 +48,25 @@ class StrategyBucket(object):
         return (1 - self.__learning_rate) * self.get_decision(decision).rating
 
     def get_decision(self, decision: Decision) -> Decision:
-        dec = list(filter(lambda d: d.environment == decision.environment and d.direction == decision.direction, self.__strategy))
+        dec = list(filter(lambda d: d.environment == decision.environment and d.direction == decision.direction,
+                          self.__strategy))
         return dec.pop() if len(dec) > 0 else Decision(decision.environment, decision.direction)
 
     def update_strategy(self, decision: Decision, rating: float):
         index = self.index(decision)
         if index is None:
             self.__strategy.append(decision)
-            index = len(self.__strategy)-1
+            index = len(self.__strategy) - 1
         self.__strategy[index].rating = rating
 
     def get_distance(self, x1: int, y1: int, x2: int, y2: int):
-        return sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     def index(self, decision: Decision):
         for i, dec in enumerate(self.__strategy):
             if dec.environment == decision.environment and dec.direction == decision.direction:
                 return i
         return None
-
 
     def get_strategy(self, environment: list):
         decisions_list = self.get_environmental_decisions(environment)
@@ -74,7 +76,7 @@ class StrategyBucket(object):
 
     def get_environmental_decisions(self, environment: list):
         decisions_list = []
-        for decision in self.__decisions:
+        for decision in self.__strategy:
             if decision.environment == environment:
                 decisions_list.append(decision)
         return decisions_list
@@ -91,5 +93,6 @@ class StrategyBucket(object):
     def __str__(self):
         message = ""
         for decision in self.__strategy:
-            message += "[" + str(decision.environment) + " " + str(decision.direction) + " " + str(decision.rating) + "]\n"
+            message += "[" + str(decision.environment) + " " + str(decision.direction) + " " + str(
+                decision.rating) + "]\n"
         return message
