@@ -11,18 +11,11 @@ class StrategyBucket(object):
         self.__learning_rate = LEARNING_RATE
         self.__discount_rate = DISCOUNT_RATE
 
-    """
-    def add_strategy(self, strategy: list):
-        strategy_length = len(strategy)
-        for decision in strategy:
-            decision.rating = self.calculate_decision_rating(decision, strategy_length)
-    """
-
     def add_new_decisions_history(self, history: list[Decision]):
         self.__decisions = history.copy()
 
-    def learn_using_history(self):
-        self.update_strategy_for_final_choice(self.__decisions[-1], DESTINATION_FIELD_PRICE)
+    def learn_using_history(self, was_destination_reached: bool):
+        self.update_strategy_for_final_choice(self.__decisions[-1], was_destination_reached)
         for i in range(len(self.__decisions) - 2, -1, -1):
             decision = self.__decisions[i]
             next_decision = self.__decisions[i + 1]
@@ -34,11 +27,11 @@ class StrategyBucket(object):
         old = self.old_value_part(decision)
         return new + old
 
-    def update_strategy_for_final_choice(self, decision: Decision, value: int):
-        index = self.index(decision)
-        if index is None:
+    def update_strategy_for_final_choice(self, decision: Decision, was_destination_reached: bool):
+        if (index := self.index(decision)) is None:
             self.__strategy.append(decision)
             index = len(self.__strategy) - 1
+        value = DESTINATION_FIELD_PRICE if was_destination_reached else EMPTY_FIELD_COST
         self.__strategy[index].rating += value
 
     def new_value_part(self, next_decision: Decision):
@@ -75,11 +68,7 @@ class StrategyBucket(object):
         return None
 
     def get_environmental_decisions(self, environment: list):
-        decisions_list = []
-        for decision in self.__strategy:
-            if decision.environment == environment:
-                decisions_list.append(decision)
-        return decisions_list
+        return list(filter(lambda d: d.environment == environment, self.__strategy))
 
     def get_the_best_decision(self, decisions_list: list[Decision]):
         best_decision_rating = decisions_list[0].rating

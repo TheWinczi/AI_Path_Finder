@@ -28,7 +28,7 @@ def get_path_row_as_string(world_row):
 
 
 def main2():
-    world_height, world_width = 15, 15
+    world_height, world_width = 20, 20
     world = World(world_width, world_height)
     agent = Agent(world)
     world.place_agent(agent)
@@ -39,6 +39,7 @@ def main2():
 
     while True:
         current_exploration_rate = agent.get_exploration_rate()
+
         if current_exploration_rate < 0.01:
             optimal_path = agent.get_optimal_path()
             print("")
@@ -49,10 +50,11 @@ def main2():
         if status == 0:
             fail_counter += 1
         if status == 1:
-            print("success")
+            # print("success")
             fail_counter -= 9999999
         if fail_counter > 100:
             raise Exception("bad world")
+
         agent.learn_new_strategy()
         agent.set_position(start_agent_x, start_agent_y)
         world.place_destination_on_map(dx, dy)
