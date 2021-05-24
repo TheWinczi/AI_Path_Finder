@@ -60,9 +60,9 @@ class World(object):
         assert 0 <= x <= self.__width, 'Bad point coordinates'
         assert 0 <= y <= self.__height, 'Bad point coordinates'
 
-        env_vector = [[OBSTACLE_VALUE for _ in range(5)].copy() for _ in range(5)]
-        for i in range(-2, 3):
-            for j in range(-2, 3):
+        env_vector = [[OBSTACLE_VALUE for _ in range(3)].copy() for _ in range(3)]
+        for i in range(-1, 2):
+            for j in range(-1, 2):
                 if 0 <= y + i < self.__height and 0 <= x + j < self.__width:
                     env_vector[i + 1][j + 1] = self.__world[y + i][x + j]
         return env_vector
@@ -72,14 +72,25 @@ class World(object):
             return self.__world[y][x] == EMPTY_FIELD_VALUE or self.__world[y][x] == DESTINATION_VALUE
         return False
 
-    def update_agent_point(self):
-        for i, row in enumerate(self.__world):
-            for j, field in enumerate(row):
+    def update_agent_point(self, past_x: int = None, past_y: int = None, new_x: int = None, new_y: int = None):
+        if past_x is None or past_y is None:
+            past_x, past_y = self.find_agent()
+        if new_x is None or new_y is None:
+            current_agent_position = self.__agent.get_position()
+            new_x, new_y = current_agent_position[0], current_agent_position[1]
+        self.change_field_value(past_x, past_y, EMPTY_FIELD_VALUE)
+        self.change_field_value(new_x, new_y, AGENT_VALUE)
+
+    def find_agent(self):
+        for y, row in enumerate(self.__world):
+            for x, field in enumerate(row):
                 if field == AGENT_VALUE:
-                    self.__world[i][j] = EMPTY_FIELD_VALUE
-                    break
-        current_agent_position = self.__agent.get_position()
-        self.__world[current_agent_position[1]][current_agent_position[0]] = AGENT_VALUE
+                    return x, y
+        return -1, -1
+
+    def change_field_value(self, x: int, y: int, value):
+        if 0 <= x < self.__width and 0 <= y < self.__height:
+            self.__world[y][x] = value
 
     def __str__(self):
         world_as_string = ""

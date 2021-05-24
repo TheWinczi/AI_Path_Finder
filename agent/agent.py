@@ -34,10 +34,11 @@ class Agent(object):
         return Decision(environment, direction)
 
     def move(self, decision: Decision):
+        past_x, past_y = self.__x, self.__y
         self.__y += decision.direction.value[0]
         self.__x += decision.direction.value[1]
         self.add_to_history(decision)
-        self.__world.update_agent_point()
+        self.__world.update_agent_point(past_x, past_y, self.__x, self.__y)
 
     def go_to_destination(self, max_moves: int = MAX_AGENT_MOVES_COUNT):
         self.__start_x, self.__start_y = self.__x, self.__y
@@ -50,19 +51,18 @@ class Agent(object):
 
     def learn_new_strategy(self):
         self.give_history_to_strategy_bucket()
-        self.__strategy_bucket.learn_using_history()
+        self.__strategy_bucket.learn_using_history(self.is_in_destination())
         self.__exploration_rate *= self.__exploration_decaying_rate
         self.clear_history()
 
     def choose_direction(self):
         counter = 0
-        while True:
-            counter += 1
-            if counter > 10000:
-                raise Exception("bad world")
+        while counter := counter + 1:
             direction = Direction.get_direction(randrange(0, 4))
             if self.__world.is_field_empty(self.__x + direction.value[1], self.__y + direction.value[0]):
                 return direction
+            if counter > 10000:
+                raise Exception("bad world")
 
     def give_history_to_strategy_bucket(self):
         self.__strategy_bucket.add_new_decisions_history(self.__history)
@@ -87,7 +87,7 @@ class Agent(object):
     def set_position(self, x: int, y: int):
         self.__x = x
         self.__y = y
-        self.__world.update_agent_point()
+        self.__world.update_agent_point(new_x=x, new_y=y)
 
     def set_destination(self, x: int, y: int):
         self.__destination_x = x
