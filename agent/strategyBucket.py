@@ -1,6 +1,5 @@
 from agent.decision import Decision
 from constants.constants import *
-from math import sqrt
 
 
 class StrategyBucket(object):
@@ -35,7 +34,8 @@ class StrategyBucket(object):
         self.__strategy[index].rating += value
 
     def new_value_part(self, next_decision: Decision):
-        return self.__learning_rate * (EMPTY_FIELD_COST + (self.__discount_rate * self.get_strategy(next_decision.environment).rating))
+        value = self.__learning_rate * (EMPTY_FIELD_COST + self.__discount_rate * self.get_strategy(next_decision.environment).rating)
+        return value
 
     def old_value_part(self, decision: Decision):
         return (1 - self.__learning_rate) * self.get_decision(decision).rating
@@ -51,9 +51,6 @@ class StrategyBucket(object):
             self.__strategy.append(decision)
             index = len(self.__strategy) - 1
         self.__strategy[index].rating = rating
-
-    def get_distance(self, x1: int, y1: int, x2: int, y2: int):
-        return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     def index(self, decision: Decision):
         for i, dec in enumerate(self.__strategy):
@@ -71,13 +68,14 @@ class StrategyBucket(object):
         return list(filter(lambda d: d.environment == environment, self.__strategy))
 
     def get_the_best_decision(self, decisions_list: list[Decision]):
-        best_decision_rating = decisions_list[0].rating
-        best_decision_index = 0
-        for i, decision in enumerate(decisions_list):
-            if decision.rating > best_decision_rating:
-                best_decision_index = i
-                best_decision_rating = decision.rating
-        return decisions_list[best_decision_index]
+        best_decision = max(decisions_list, key=lambda d: d.rating)
+        return best_decision
+
+    def reset(self):
+        self.__strategy.clear()
+        self.__decisions.clear()
+        self.__learning_rate = LEARNING_RATE
+        self.__discount_rate = DISCOUNT_RATE
 
     def __str__(self):
         message = ""

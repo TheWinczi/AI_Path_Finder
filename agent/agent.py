@@ -84,6 +84,16 @@ class Agent(object):
         string_agent += "}"
         return string_agent
 
+    def reset(self):
+        self.__history.clear()
+        self.__coords_history.clear()
+        self.__x, self.__y = self.__start_x, self.__start_y
+        self.__world.update_agent_point(new_x=self.__x, new_y=self.__y)
+        self.__world.place_destination_on_map(self.__destination_x, self.__destination_y)
+        self.__strategy_bucket.reset()
+        self.__exploration_rate = EXPLORATION_RATE_INIT
+        self.__exploration_decaying_rate = EXPLORATION_DECAY_RATE
+
     def set_position(self, x: int, y: int):
         self.__x = x
         self.__y = y
@@ -122,7 +132,7 @@ class Agent(object):
         for coord in self.__coords_history:
             if map[coord[1]][coord[0]] != DESTINATION_VALUE and map[coord[1]][coord[0]] != AGENT_VALUE:
                 map[coord[1]][coord[0]] = PATH_VALUE
-        return map
+        return map, len(self.__coords_history)
 
 
 if __name__ == '__main__':
