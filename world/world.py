@@ -120,6 +120,9 @@ class World(object):
         assert height > 0, 'World height has to be positive value'
         self.__height = height
 
+    def set_world_array(self, world: list[list[int]]):
+        self.__world = world
+
     def get_point(self, x: int, y: int):
         assert 0 <= x < self.__width, 'Point beyond the world'
         assert 0 <= y < self.__height, 'Point beyond the world'
