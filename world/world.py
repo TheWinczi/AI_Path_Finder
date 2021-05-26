@@ -112,6 +112,9 @@ class World(object):
             row += " "
         return row
 
+    def clear_world(self):
+        self.__world = [[EMPTY_FIELD_VALUE for _ in range(self.__width)].copy() for _ in range(self.__height)]
+
     def set_width(self, width: int):
         assert width > 0, 'World width has to be positive value'
         self.__width = width
