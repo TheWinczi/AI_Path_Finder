@@ -112,6 +112,9 @@ class World(object):
             row += " "
         return row
 
+    def clear_world(self):
+        self.__world = [[EMPTY_FIELD_VALUE for _ in range(self.__width)].copy() for _ in range(self.__height)]
+
     def set_width(self, width: int):
         assert width > 0, 'World width has to be positive value'
         self.__width = width
@@ -119,6 +122,9 @@ class World(object):
     def set_height(self, height: int):
         assert height > 0, 'World height has to be positive value'
         self.__height = height
+
+    def set_world_array(self, world: list[list[int]]):
+        self.__world = world
 
     def get_point(self, x: int, y: int):
         assert 0 <= x < self.__width, 'Point beyond the world'
