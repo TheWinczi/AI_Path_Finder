@@ -32,14 +32,9 @@ INIT_DECISION_RATING = 9
 
 
 
-# constants
-WINDOW_WIDTH = 720
-WINDOW_HEIGHT = 480
-
-
+# constants values needed for GUI application
 FIELD_WIDTH = 20
 FIELD_HEIGHT = 20
-
 
 AGENT_COLOR = "red"
 EMPTY_FIELD_COLOR = "white"
