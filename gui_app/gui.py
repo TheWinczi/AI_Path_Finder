@@ -44,7 +44,10 @@ class GUI(Frame):
         self.__create_obstacles_entry()
 
         world_bttn = Button(self, text="Generate World", command=self.__reload_world, bg=BUTTON_COLOR)
-        world_bttn.grid(row=1, column=self.__world_width + 4, rowspan=3, padx=10, sticky=N+S+E+W)
+        world_bttn.grid(row=1, column=self.__world_width + 4, rowspan=2, padx=10, sticky=N+S+E+W)
+
+        world_bttn = Button(self, text="Clear World", command=self.__clear_world, bg=BUTTON_COLOR)
+        world_bttn.grid(row=3, column=self.__world_width + 4, padx=10, sticky=N+S+E+W)
 
     def __create_width_entry(self):
         width_label = Label(self, text="width", pady=2)
@@ -94,10 +97,6 @@ class GUI(Frame):
         self.__show_statistics_cb = Checkbutton(self, text="Show statistics", onvalue=1, offvalue=0, variable=self.__show_statistics_cb_var)
         self.__show_statistics_cb.grid(row=7, column=self.__world_width+1, columnspan=2, sticky=N+S+E+W)
         self.__show_statistics_cb.select()
-
-    def __create_empty_row(self, row: int):
-        empty_label = Label(self, height=1)
-        empty_label.grid(row=row, column=self.__world_width, columnspan=4)
 
     def __create_start_buttons(self):
         self.__start_bttn = Button(self, text="START", command=self.__start, bg=START_BUTTON_COLOR, font=('Arial', 10, 'bold'))
@@ -269,6 +268,12 @@ class GUI(Frame):
         plt.xlabel("Number of path")
         plt.ylabel("Number of iterations")
         plt.show()
+
+    def __clear_world(self):
+        self.__agent.go_to_start()
+        dx, dy = self.__agent.get_destination()
+        self.__world.place_destination_on_map(dx, dy)
+        self.__draw_world()
 
     def __show_statistics(self):
         message = "learning took " + str(self.__statistics["time"]) + "\n"
