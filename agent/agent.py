@@ -87,9 +87,12 @@ class Agent(object):
     def reset(self):
         self.__history.clear()
         self.__coords_history.clear()
+        self.reset_constants()
+        self.go_to_start()
+
+    def reset_constants(self):
         self.__exploration_rate = EXPLORATION_RATE_INIT
         self.__exploration_decaying_rate = EXPLORATION_DECAY_RATE
-        self.go_to_start()
 
     def reset_strategy_bucket(self):
         self.__strategy_bucket.reset()
@@ -115,6 +118,9 @@ class Agent(object):
     def set_destination(self, x: int, y: int):
         self.__destination_x = x
         self.__destination_y = y
+
+    def set_exploration_rate(self, exploration_rate: float):
+        self.__exploration_rate = exploration_rate
 
     def get_destination(self):
         return self.__destination_x, self.__destination_y
@@ -147,7 +153,7 @@ class Agent(object):
         for coord in self.__coords_history:
             if map[coord[1]][coord[0]] != DESTINATION_VALUE and map[coord[1]][coord[0]] != AGENT_VALUE:
                 map[coord[1]][coord[0]] = PATH_VALUE
-        return map, len(self.__coords_history)
+        return map
 
 
 if __name__ == '__main__':
