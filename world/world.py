@@ -7,12 +7,13 @@ from random import randrange
 
 class World(object):
 
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, obstacles_count: int = None):
         assert width > 0, 'World width has to be positive value'
         assert height > 0, 'World height has to be positive value'
 
         self.__width = width
         self.__height = height
+        self.__obstacles_count = OBSTACLES_COUNT if obstacles_count is None else obstacles_count
         self.__world = [[EMPTY_FIELD_VALUE for _ in range(width)].copy() for _ in range(height)]
         self.__agent = None
         self.generate_world()
@@ -24,7 +25,7 @@ class World(object):
         self.__agent = agent
         new_x = randrange(0, self.__width)
         new_y = randrange(0, self.__height)
-        self.__agent.set_position(new_x, new_y)
+        self.__agent.place_on_world(new_x, new_y)
         self.__world[new_y][new_x] = AGENT_VALUE
         self.place_destination()
 
@@ -35,7 +36,7 @@ class World(object):
         self.__agent.set_destination(x, y)
 
     def place_obstacles(self):
-        for _ in range(OBSTACLES_COUNT):
+        for _ in range(self.__obstacles_count):
             x = randrange(0, self.__width)
             y = randrange(0, self.__height)
             size = randrange(2, MAX_OBSTACLE_SIZE + 1)
@@ -112,12 +113,19 @@ class World(object):
             row += " "
         return row
 
+    def get_obstacles_count(self):
+        return self.__obstacles_count
+
     def clear_world(self):
         self.__world = [[EMPTY_FIELD_VALUE for _ in range(self.__width)].copy() for _ in range(self.__height)]
 
     def set_width(self, width: int):
         assert width > 0, 'World width has to be positive value'
         self.__width = width
+
+    def set_obstacles_count(self, count: int):
+        assert count > 0, 'Bad obstacles count'
+        self.__obstacles_count = count
 
     def set_height(self, height: int):
         assert height > 0, 'World height has to be positive value'

@@ -77,6 +77,9 @@ class StrategyBucket(object):
         self.__learning_rate = LEARNING_RATE
         self.__discount_rate = DISCOUNT_RATE
 
+    def get_strategies_list(self):
+        return self.__strategy
+
     def __str__(self):
         message = ""
         for decision in self.__strategy:

@@ -17,8 +17,8 @@ class Agent(object):
         self.__history = []
         self.__x = 0
         self.__y = 0
-        self.__start_x = 0
-        self.__start_y = 0
+        self.__start_x = -1
+        self.__start_y = -1
         self.__destination_x = 0
         self.__destination_y = 0
         self.__strategy_bucket = StrategyBucket()
@@ -87,12 +87,25 @@ class Agent(object):
     def reset(self):
         self.__history.clear()
         self.__coords_history.clear()
-        self.__x, self.__y = self.__start_x, self.__start_y
-        self.__world.update_agent_point(new_x=self.__x, new_y=self.__y)
-        self.__world.place_destination_on_map(self.__destination_x, self.__destination_y)
-        self.__strategy_bucket.reset()
         self.__exploration_rate = EXPLORATION_RATE_INIT
         self.__exploration_decaying_rate = EXPLORATION_DECAY_RATE
+        self.go_to_start()
+
+    def reset_strategy_bucket(self):
+        self.__strategy_bucket.reset()
+
+    def clear_history(self):
+        self.__history.clear()
+        self.__coords_history.clear()
+
+    def go_to_start(self):
+        self.__x = self.__start_x
+        self.__y = self.__start_y
+        self.__world.update_agent_point(new_x=self.__x, new_y=self.__y)
+
+    def place_on_world(self, x: int, y: int):
+        self.set_position(x, y)
+        self.__start_x, self.__start_y = self.__x, self.__y
 
     def set_position(self, x: int, y: int):
         self.__x = x
@@ -109,21 +122,23 @@ class Agent(object):
     def set_world(self, world):
         self.__world = world
 
-    def clear_history(self):
-        self.__history.clear()
-        self.__coords_history.clear()
-
     def get_history(self):
         return self.__history
 
     def get_position(self):
         return self.__x, self.__y
 
+    def get_start_position(self):
+        return self.__start_x, self.__start_y
+
     def get_strategy_bucket(self):
         return self.__strategy_bucket
 
     def get_exploration_rate(self):
         return self.__exploration_rate
+
+    def get_coords_history(self):
+        return self.__coords_history
 
     def get_optimal_path(self):
         map = self.__world.get_world_copy()
