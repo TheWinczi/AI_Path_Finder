@@ -10,7 +10,7 @@ class StrategyBucket(object):
         self.__learning_rate = LEARNING_RATE
         self.__discount_rate = DISCOUNT_RATE
 
-    def add_new_decisions_history(self, history: list[Decision]):
+    def add_new_decisions_history(self, history: list):
         self.__decisions = history.copy()
 
     def learn_using_history(self, was_destination_reached: bool):
@@ -67,7 +67,7 @@ class StrategyBucket(object):
     def get_environmental_decisions(self, environment: list):
         return list(filter(lambda d: d.environment == environment, self.__strategy))
 
-    def get_the_best_decision(self, decisions_list: list[Decision]):
+    def get_the_best_decision(self, decisions_list: list):
         best_decision = max(decisions_list, key=lambda d: d.rating)
         return best_decision
 

@@ -61,11 +61,12 @@ class World(object):
         assert 0 <= x <= self.__width, 'Bad point coordinates'
         assert 0 <= y <= self.__height, 'Bad point coordinates'
 
-        env_vector = [[OBSTACLE_VALUE for _ in range(3)].copy() for _ in range(3)]
-        for i in range(-1, 2):
-            for j in range(-1, 2):
+        offset = ENVIRONMENT_VECTOR_SIZE//2
+        env_vector = [[OBSTACLE_VALUE for _ in range(ENVIRONMENT_VECTOR_SIZE)].copy() for _ in range(ENVIRONMENT_VECTOR_SIZE)]
+        for i in range(-offset, offset+1):
+            for j in range(-offset, offset+1):
                 if 0 <= y + i < self.__height and 0 <= x + j < self.__width:
-                    env_vector[i + 1][j + 1] = self.__world[y + i][x + j]
+                    env_vector[i + offset][j + offset] = self.__world[y + i][x + j]
         return env_vector
 
     def is_field_empty(self, x: int, y: int):
@@ -131,7 +132,7 @@ class World(object):
         assert height > 0, 'World height has to be positive value'
         self.__height = height
 
-    def set_world_array(self, world: list[list[int]]):
+    def set_world_array(self, world: list):
         self.__world = world
 
     def get_point(self, x: int, y: int):

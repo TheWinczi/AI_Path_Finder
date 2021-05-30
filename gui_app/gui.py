@@ -176,6 +176,7 @@ class GUI(Frame):
         self.__lunch_agent()
 
     def __start_learning(self):
+        self.__set_text_field_data("Learning...")
         self.__agent.reset()
         self.__draw_world()
         self.__lunch_agent()
@@ -227,10 +228,14 @@ class GUI(Frame):
     def __print_strategy(self):
         print("Actual strategies list:\n".upper())
         strategies = self.__agent.get_strategy_bucket().get_strategies_list()
+        offset = ENVIRONMENT_VECTOR_SIZE//2
         for strategy in strategies:
-            print(self.__world.get_world_row_as_string(strategy.environment[0]))
-            print(self.__world.get_world_row_as_string(strategy.environment[1]), f"=> {strategy.direction}, rating = {strategy.rating}")
-            print(self.__world.get_world_row_as_string(strategy.environment[2]), "\n")
+            for i in range(-offset, offset+1):
+                print(self.__world.get_world_row_as_string(strategy.environment[i+offset]), end="")
+                if i == 0:
+                    print(f" => {strategy.direction}, rating = {strategy.rating}", end="")
+                print()
+            print()
 
     def __check_statistics(self):
         if self.__show_statistics_cb_var.get():
