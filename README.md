@@ -1,4 +1,4 @@
-# AI Project - Reinforcement Learning
+# AI Path Finder - Reinforcement Learning
 
 Project in the subject of Artificial Intelligence. 
 In program agent tries to move to destination point in randomly generated world full of obstacles.
